@@ -1,5 +1,6 @@
+nameOverride: ""
+
 api:
-  nameOverride: ""
   enabled: true
   replicaCount: 1
   image:
@@ -15,8 +16,7 @@ api:
     enabled: false
     annotations: {}
     paths: []
-    hosts:
-      - chart-example.local
+    hosts: []
     tls: []
 
   defaults:
@@ -95,7 +95,6 @@ api:
   affinity: {}
 
 database:
-  nameOverride: ""
   replicaCount: 1
   image:
     repository: idealpostcodes/postcodes.io.db
