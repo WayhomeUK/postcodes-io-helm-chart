@@ -1,0 +1,132 @@
+api:
+  nameOverride: ""
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: idealpostcodes/postcodes.io
+    tag: release-10.0.1
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: false
+    annotations: {}
+    paths: []
+    hosts:
+      - chart-example.local
+    tls: []
+
+  defaults:
+    nearest:
+      radius:
+        DEFAULT: 100
+        MAX: 2000
+      limit:
+        DEFAULT: 10
+        MAX: 100
+    search:
+      limit:
+        DEFAULT: 10
+        MAX: 100
+    bulkGeocode:
+      geolocations:
+        MAX: 100
+        ASYNC_LIMIT: null
+        TIMEOUT: 30000
+    bulkLookups:
+      postcodes:
+        MAX: 100
+        ASYNC_LIMIT: null
+        TIMEOUT: 30000
+    nearestOutcodes:
+      radius:
+        DEFAULT: 5000
+        MAX: 25000
+      limit:
+        DEFAULT: 10
+        MAX: 100
+    placesSearch:
+      limit:
+        DEFAULT: 10
+        MAX: 100
+    placesContained:
+      limit:
+        DEFAULT: 10
+        MAX: 100
+    placesNearest:
+      limit:
+        DEFAULT: 10
+        MAX: 100
+      radius:
+        DEFAULT: 1000
+        MAX: 10000
+    filterableAttributes:
+      - "postcode"
+      - "quality"
+      - "eastings"
+      - "northings"
+      - "country"
+      - "nhs_ha"
+      - "longitude"
+      - "latitude"
+      - "parliamentary_constituency"
+      - "european_electoral_region"
+      - "primary_care_trust"
+      - "region"
+      - "lsoa"
+      - "msoa"
+      - "incode"
+      - "outcode"
+      - "codes"
+      - "admin_district"
+      - "parish"
+      - "admin_county"
+      - "admin_ward"
+      - "ccg"
+      - "nuts"
+      - "ced"
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+database:
+  nameOverride: ""
+  replicaCount: 1
+  image:
+    repository: idealpostcodes/postcodes.io.db
+    tag: 10.0.1
+    pullPolicy: IfNotPresent
+
+  username: "postcodesio"
+  password: ~
+  database: "postcodesiodb"
+
+  service:
+    type: ClusterIP
+    port: 5432
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 150
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

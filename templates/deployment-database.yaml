@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "postcodes-io.database.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "postcodes-io.database.name" . }}
+    helm.sh/chart: {{ include "postcodes-io.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.database.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "postcodes-io.database.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "postcodes-io.database.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+{{- if .Values.database.livenessProbe.enabled }}
+          livenessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - pg_isready -U {{ .Values.database.username | quote }} -d {{ .Values.database.database | quote }} -h localhost
+            initialDelaySeconds: {{ .Values.database.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.database.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.database.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.database.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.database.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.database.readinessProbe.enabled }}
+          readinessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - pg_isready -U {{ .Values.database.username | quote }} -d {{ .Values.database.database | quote }} -h localhost
+            initialDelaySeconds: {{ .Values.database.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.database.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.database.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.database.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.database.readinessProbe.failureThreshold }}
+{{- end }}
+          resources:
+            {{- toYaml .Values.database.resources | nindent 12 }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.database.username }}
+            - name: POSTGRES_DB
+              value: {{ .Values.database.database }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postcodes-io.database.fullname" . }}
+                  key: password
+      {{- with .Values.database.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.database.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.database.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

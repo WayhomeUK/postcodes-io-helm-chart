@@ -1,0 +1,14 @@
+apiVersion: v1
+name: postcodes-io
+version: 0.0.1
+appVersion: "10.0.1"
+description: UK Postcode API serving up Open Data
+keywords:
+  - postcodes
+  - data
+  - geolocations
+  - http
+  - API
+home: https://postcodes.io
+sources:
+  - https://github.com/ideal-postcodes/postcodes.io 
