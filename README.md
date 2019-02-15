@@ -9,8 +9,7 @@ TL;DR;
 ------
 
 ```
-$ helm install github.com/unmortgage/postcodes-io-helm-chart --set
-datbase.password=foobar
+$ helm install https://github.com/Unmortgage/postcodes-io-helm-chart/archive/0.0.2.tar.gz --set datbase.password=foobar
 ```
 
 Introduction
@@ -32,7 +31,7 @@ Installing the chart
 To install the chart with the release name `my-release`:
 
 ```
-$ helm install --name my-release github.com/unmortgage.com/postcodes-io-helm-chart --set password=foobar
+$ helm install --name my-release https://github.com/Unmortgage/postcodes-io-helm-chart/archive/0.0.2.tar.gz --set password=foobar
 ```
 
 The command deploys the postcode.io database and it's RESTful API on the
